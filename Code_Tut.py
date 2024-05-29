@@ -1,3 +1,4 @@
+#Note: This is the code from the tutorial where the nested for loops are eliminated.
 import numpy as np
 import matplotlib.pyplot as plt
 import source as s

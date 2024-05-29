@@ -1,3 +1,4 @@
+#Note: this is the first code provided by the tutorial with my corrections added.
 import numpy as np
 import matplotlib.pyplot as plt
 import source as s
@@ -27,7 +28,7 @@ xpos= 0.0 # Source position. X coordinate
 ypos= 1.0 # Source position. Y coordinate
 rad= 0.1 # Radius of source
 ipos=int(round(xpos/ys)) # Convert source parameters to pixels
-jpos=int(round(ypos/ys))
+jpos=int(round(ypos/ys)) #Note: In the original code, there was a negative sign in front of ypos
 rpix=int(round(rad/ys))
 
 a=s.gcirc(ny,rpix,jpos,ipos) # This is a circular gaussian source
@@ -46,7 +47,7 @@ for j1 in range(nx):
         if 0 <= i1 < ny and 0 <= i2 < ny:
             b[j1, j2] = a[i1, i2]
 
-
+#This next nested for loop is for the case of 2 lenses.
 
 # # This is the main loop over pixels at the image plane
 # for j1 in range(nx):

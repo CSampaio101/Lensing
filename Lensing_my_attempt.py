@@ -1,3 +1,4 @@
+#Note: This includes my attempts at changing some of the code to produce a correct result, but is detached from the tutorial somewhat.
 import numpy as np
 import matplotlib.pyplot as plt
 import source as s
