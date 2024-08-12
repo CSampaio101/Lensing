@@ -6,11 +6,14 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+import power_spectrum as ps
 # Main dependencies
 import numpy
 import scipy.fftpack
+import power_spectrum as ps
 
+#Parameters needed for power spectrum here
+params = {'M':1e-6, 'c': 10, 'DL': 1.35, 'DS':1.79, 'DLS':0.95, 'dm_mass_fraction':1}
 
 def fftind(size):
     """ Returns a numpy array of shifted Fourier coordinates k_x k_y.
@@ -75,8 +78,12 @@ def gaussian_random_field(alpha = 3.0,
     k_idx = fftind(size)
 
         # Defines the amplitude as a power law 1/|k|^(alpha/2)
-    amplitude = numpy.power( k_idx[0]**2 + k_idx[1]**2 + 1e-10, -alpha/4.0 )
-    amplitude[0,0] = 0
+    
+    k_magnitude = numpy.sqrt(k_idx[0]**2 + k_idx[1]**2 + 1e-10)
+    #amplitude = numpy.power( k_idx[0]**2 + k_idx[1]**2 + 1e-10, -alpha/4.0 )
+    amplitude = [q**2 / 2 / numpy.pi * ps.Pkappa_angular(q, params) for q in k_magnitude.flatten()]
+    amplitude = numpy.array(amplitude).reshape(size, size)
+    amplitude[0, 0] = 0  # Set the zero frequency component to zero
     
         # Draws a complex gaussian random noise with normal
         # (circular) distribution
