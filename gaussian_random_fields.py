@@ -15,7 +15,7 @@ import power_spectrum as ps
 #Parameters needed for power spectrum here
 params = {'M':1e-6, 'c': 10, 'DL': 1.35, 'DS':1.79, 'DLS':0.95, 'dm_mass_fraction':1}
 
-def fftind(size):
+def fftind(size, domain_size):
     """ Returns a numpy array of shifted Fourier coordinates k_x k_y.
         
         Input args:
@@ -44,13 +44,14 @@ def fftind(size):
         """
     k_ind = numpy.mgrid[:size, :size] - int( (size + 1)/2 )
     k_ind = scipy.fftpack.fftshift(k_ind)
+    k_ind = k_ind * (2*numpy.pi / domain_size)
     return( k_ind )
 
 
 
-def gaussian_random_field(alpha = 3.0,
-                          size = 128, 
-                          flag_normalize = True):
+def gaussian_random_field(size = 128, 
+                          flag_normalize = True,
+                          domain_size = 1):
     """ Returns a numpy array of shifted Fourier coordinates k_x k_y.
         
         Input args:
@@ -75,13 +76,15 @@ def gaussian_random_field(alpha = 3.0,
         """
         
         # Defines momentum indices
-    k_idx = fftind(size)
-
+    k_idx = fftind(size, domain_size)
+    #print("shape", numpy.shape(k_idx))
         # Defines the amplitude as a power law 1/|k|^(alpha/2)
     
     k_magnitude = numpy.sqrt(k_idx[0]**2 + k_idx[1]**2 + 1e-10)
-    #amplitude = numpy.power( k_idx[0]**2 + k_idx[1]**2 + 1e-10, -alpha/4.0 )
-    amplitude = [q**2 / 2 / numpy.pi * ps.Pkappa_angular(q, params) for q in k_magnitude.flatten()]
+    #amplitude = numpy.power( k_idx[0]**2 + k_idx[1]**2 + 1e-10, -alpha/4.0 ) #Note: This is the original amplitude function
+    
+    #This new amplitude is obtained from our calculated power spectrum
+    amplitude = [ps.Pkappa_angular(q, params) for q in k_magnitude.flatten()]
     amplitude = numpy.array(amplitude).reshape(size, size)
     amplitude[0, 0] = 0  # Set the zero frequency component to zero
     
@@ -90,15 +93,16 @@ def gaussian_random_field(alpha = 3.0,
     noise = numpy.random.normal(size = (size, size)) \
         + 1j * numpy.random.normal(size = (size, size))
     
-        # To real space
-    gfield = numpy.fft.ifft2(noise * amplitude).real
-    
+        # To real space. Note, this is done twice since the delta alpha is a vector, based on which component of k you use..
+    gfield_x1 = numpy.fft.ifft2((2 * 1j * numpy.pi * k_idx[0] / k_magnitude**2 ) * noise * amplitude).real
+    gfield_x2 = numpy.fft.ifft2((2 * 1j * numpy.pi * k_idx[1] / k_magnitude**2 ) * noise * amplitude).real
         # Sets the standard deviation to one
     if flag_normalize:
-        gfield = gfield - numpy.mean(gfield)
-        gfield = gfield/numpy.std(gfield)
-        
-    return gfield
+        gfield_x1 = gfield_x1 - numpy.mean(gfield_x1)
+        gfield_x2 = gfield_x2 - numpy.mean(gfield_x2)
+        gfield_x1 = gfield_x1/numpy.std(gfield_x1)
+        gfield_x2 = gfield_x2/numpy.std(gfield_x2)    
+    return gfield_x1, gfield_x2
 
 
 
@@ -107,8 +111,8 @@ def main():
     import matplotlib
     import matplotlib.pyplot as plt
     example = gaussian_random_field()
-    plt.imshow(example, cmap='gray')
-    plt.show()
+    # plt.imshow(example, cmap='gray')
+    # plt.show()
     
 if __name__ == '__main__':
     main()

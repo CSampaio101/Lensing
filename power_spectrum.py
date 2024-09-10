@@ -3,8 +3,8 @@ import numpy as np
 
 
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
+#import matplotlib as mpl
+#import matplotlib.pyplot as plt
 
 #plt.rcParams['text.usetex'] = True
 
@@ -85,19 +85,19 @@ params = {'M':1e-6, 'c': 10, 'DL': 1.35, 'DS':1.79, 'DLS':0.95, 'dm_mass_fractio
 qPerp = np.geomspace(1e-20, 1e11, 1000)
 k_rs = get_halo_information(params['M'], params['c'])[0]*qPerp
 pkappa = [q**2 / 2 / np.pi * Pkappa(q, params) for q in qPerp]
-plt.plot(k_rs, pkappa, label = '$c = 10$')
+#plt.plot(k_rs, pkappa, label = '$c = 10$')
 
 params = {'M':1e-6, 'c': 100, 'DL': 1.35, 'DS':1.79, 'DLS':0.95, 'dm_mass_fraction':1}
 qPerp = np.geomspace(1e-20, 1e11, 1000)
 pkappa = [q**2 / 2 / np.pi * Pkappa(q,params) for q in qPerp]
 k_rs = get_halo_information(params['M'], params['c'])[0]*qPerp
-plt.plot(k_rs, pkappa, label = '$c = 100$')
+#plt.plot(k_rs, pkappa, label = '$c = 100$')
 
 params = {'M':1e-6, 'c': 1000, 'DL': 1.35, 'DS':1.79, 'DLS':0.95, 'dm_mass_fraction':1}
 qPerp = np.geomspace(1e-20, 1e11, 1000)
 pkappa = [q**2 / 2 / np.pi * Pkappa(q, params) for q in qPerp]
 k_rs = get_halo_information(params['M'], params['c'])[0]*qPerp
-plt.plot(k_rs, pkappa, label = '$c = 1000$')
+#plt.plot(k_rs, pkappa, label = '$c = 1000$')
 
 # plt.ylim(float(pkappa[0]), 1e-5)
 # plt.xlim(k_rs[0], 1e11)
@@ -117,7 +117,7 @@ for c in [10, 100, 1000]:
     lPerp = np.geomspace(1e-10*params['DL']*Gpc_in_km/rs, 1e10*params['DL']*Gpc_in_km/rs, 1000)
     l_rs_over_DL = lPerp*rs/(params['DL']*Gpc_in_km)
     pkappa = [l**2 / 2 / np.pi * Pkappa_angular(l,params) for l in lPerp]
-    plt.plot(l_rs_over_DL, pkappa, label = '$c = '+str(c)+'$')
+    #plt.plot(l_rs_over_DL, pkappa, label = '$c = '+str(c)+'$')
 
 
 # plt.ylim(float(pkappa[0]), 1e-5)
